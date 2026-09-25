@@ -4,8 +4,9 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import project.app.smartpantry.data.DatabaseHelper;
 
-public class MainActivity extends AppCompatActivity {
 
+
+public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -13,7 +14,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        // temp: forces the db to be created
+
         new DatabaseHelper(this).getWritableDatabase();
     }
 }

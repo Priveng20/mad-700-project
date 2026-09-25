@@ -1,8 +1,16 @@
 package project.app.smartpantry.data;
 
+
+
+
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import java.util.ArrayList;
+import java.util.List;
+import project.app.smartpantry.model.PantryItem;
 
 
 
@@ -90,6 +98,45 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_RECIPE);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_PANTRY_ITEM);
         onCreate(db);
+    }
+    // add one pantry item and returns its new id or remove one if the insert failed
+    public long insertPantryItem(PantryItem item) {
+        SQLiteDatabase db = getWritableDatabase();
+
+
+
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_NAME, item.getName());
+        values.put(COLUMN_QUANTITY, item.getQuantity());
+        values.put(COLUMN_UNIT, item.getUnit());
+        values.put(COLUMN_EXPIRY_DATE, item.getExpiryDate());
+
+
+        return db.insert(TABLE_PANTRY_ITEM, null, values);
+    }
+
+    // reads every pantry row into a list
+    public List<PantryItem> getAllPantryItems() {
+        List<PantryItem> items = new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query(TABLE_PANTRY_ITEM, null, null, null, null, null, COLUMN_NAME + " ASC");
+
+        // finally makes sure the cursor is closed even if reading a row fails
+        try {
+            while (cursor.moveToNext()) {
+                int id = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID));
+                String name = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NAME));
+                double quantity = cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_QUANTITY));
+                String unit = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_UNIT));
+                String expiryDate = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_EXPIRY_DATE));
+
+                items.add(new PantryItem(id, name, quantity, unit, expiryDate));
+            }
+        } finally {
+            cursor.close();
+        }
+
+        return items;
     }
 
 }
