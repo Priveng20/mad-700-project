@@ -99,17 +99,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_PANTRY_ITEM);
         onCreate(db);
     }
-    // add one pantry item and returns its new id or remove one if the insert failed
+    // add one pantry item and returns its new id or -1 if the insert failed
     public long insertPantryItem(PantryItem item) {
         SQLiteDatabase db = getWritableDatabase();
 
 
 
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_NAME, item.getName());
-        values.put(COLUMN_QUANTITY, item.getQuantity());
-        values.put(COLUMN_UNIT, item.getUnit());
-        values.put(COLUMN_EXPIRY_DATE, item.getExpiryDate());
+        ContentValues values = pantryItemValues(item);
 
 
         return db.insert(TABLE_PANTRY_ITEM, null, values);
@@ -124,19 +120,81 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // finally makes sure the cursor is closed even if reading a row fails
         try {
             while (cursor.moveToNext()) {
-                int id = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID));
-                String name = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NAME));
-                double quantity = cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_QUANTITY));
-                String unit = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_UNIT));
-                String expiryDate = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_EXPIRY_DATE));
-
-                items.add(new PantryItem(id, name, quantity, unit, expiryDate));
+                items.add(readPantryItem(cursor));
             }
         } finally {
             cursor.close();
         }
 
         return items;
+    }
+
+    // finds one pantry item by id, or returns null if  no row with that id
+    public PantryItem getPantryItem(int id) {
+        SQLiteDatabase db = getReadableDatabase();
+
+
+
+
+        Cursor cursor = db.query(TABLE_PANTRY_ITEM, null, COLUMN_ID + " = ?",
+                new String[]{String.valueOf(id)}, null, null, null);
+
+        PantryItem item = null;
+        try {
+            if (cursor.moveToFirst()) {
+                item = readPantryItem(cursor);
+            }
+        } finally {
+            cursor.close();
+        }
+
+        return item;
+    }
+
+//saves new values over the row with the item's id, returns how many rows changed
+    public int updatePantryItem(PantryItem item) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = pantryItemValues(item);
+
+        return db.update(TABLE_PANTRY_ITEM, values, COLUMN_ID + " = ?",
+                new String[]{String.valueOf(item.getId())});
+    }
+
+    // removes the row with this id, returns how many rows were deleted (1 or 0)
+    public int deletePantryItem(int id) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        return db.delete(TABLE_PANTRY_ITEM, COLUMN_ID + " = ?",
+                new String[]{String.valueOf(id)});
+    }
+
+
+
+
+    // puts an item's fields into ContentValues, shared by insert and update
+    private ContentValues pantryItemValues(PantryItem item) {
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_NAME, item.getName());
+        values.put(COLUMN_QUANTITY, item.getQuantity());
+        values.put(COLUMN_UNIT, item.getUnit());
+        values.put(COLUMN_EXPIRY_DATE, item.getExpiryDate());
+
+        return values;
+    }
+
+
+
+
+
+    // turns row the cursor is on into a PantryItem
+    private PantryItem readPantryItem(Cursor cursor) {
+        int id = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID));
+        String name = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NAME));
+        double quantity = cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_QUANTITY));
+        String unit = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_UNIT));
+        String expiryDate = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_EXPIRY_DATE));
+
+        return new PantryItem(id, name, quantity, unit, expiryDate);
     }
 
 }

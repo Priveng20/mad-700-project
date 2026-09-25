@@ -2,10 +2,6 @@ package project.app.smartpantry;
 
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
-import project.app.smartpantry.data.DatabaseHelper;
-
-
-
 public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -15,6 +11,5 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        new DatabaseHelper(this).getWritableDatabase();
     }
 }
