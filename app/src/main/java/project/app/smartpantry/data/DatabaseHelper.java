@@ -18,7 +18,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_NAME = "name";
     private static final String COLUMN_QUANTITY = "quantity";
     private static final String COLUMN_UNIT = "unit";
-    private static final String COLUMN_EXPIRY_DATE = "expiry_date"    private static final String TABLE_RECIPE = "recipe";
+    private static final String COLUMN_EXPIRY_DATE = "expiry_date";
+    private static final String TABLE_RECIPE = "recipe";
     private static final String COLUMN_RECIPE_ID = "id";
     private static final String COLUMN_RECIPE_NAME = "name";
     private static final String COLUMN_RECIPE_STEPS = "steps";
