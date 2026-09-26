@@ -8,4 +8,10 @@
     <string name="item_expiry">Expires %1$s</string>
     <string name="item_no_expiry">No expiry date</string>
 
+    <string name="hint_name">Ingredient name</string>
+    <string name="hint_quantity">Quantity</string>
+    <string name="label_unit">Unit</string>
+    <string name="hint_expiry">Expiry date (optional)</string>
+    <string name="save">Save</string>
+
 </resources>
