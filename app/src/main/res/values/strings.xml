@@ -15,4 +15,11 @@
     <string name="save">Save</string>
     <string name="clear">Clear</string>
 
+    <string name="error_name_required">Enter an ingredient name</string>
+    <string name="error_quantity_required">Enter a quantity</string>
+    <string name="error_quantity_invalid">Enter a valid number</string>
+    <string name="error_quantity_positive">Quantity must be more than 0</string>
+    <string name="error_expiry_invalid">Pick a valid date</string>
+    <string name="error_save_failed">Couldn\'t save the ingredient, please try again</string>
+
 </resources>
