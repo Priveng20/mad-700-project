@@ -13,5 +13,6 @@
     <string name="label_unit">Unit</string>
     <string name="hint_expiry">Expiry date (optional)</string>
     <string name="save">Save</string>
+    <string name="clear">Clear</string>
 
 </resources>

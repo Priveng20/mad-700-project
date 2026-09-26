@@ -1,5 +1,6 @@
 package project.app.smartpantry.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -9,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,6 +47,10 @@ public class PantryListActivity extends AppCompatActivity {
         // starts empty onResume fills it from the database
         adapter = new PantryAdapter(new ArrayList<>());
         pantryList.setAdapter(adapter);
+        // names the exact screen to open
+        FloatingActionButton addButton = findViewById(R.id.add_button);
+        addButton.setOnClickListener(v ->
+                startActivity(new Intent(this, AddEditIngredientActivity.class)));
     }
 
     // runs every time this screen comes back to the front
