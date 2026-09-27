@@ -69,4 +69,12 @@ public class PantryItem {
     public void setExpiryDate(String expiryDate) {
         this.expiryDate = expiryDate;
     }
+
+    // quantity conversions
+    public String getQuantityText() {
+        if (quantity == Math.floor(quantity)) {
+            return String.valueOf((long) quantity);
+        }
+        return String.valueOf(quantity);
+    }
 }

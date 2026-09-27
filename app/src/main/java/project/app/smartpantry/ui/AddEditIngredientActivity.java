@@ -19,6 +19,11 @@ import project.app.smartpantry.model.PantryItem;
 // form for adding a new pantry item or editing an existing one
 public class AddEditIngredientActivity extends AppCompatActivity {
 
+    // key for item id passed when editing
+    public static final String EXTRA_ITEM_ID = "item_id";
+
+    private static final int NO_ITEM = -1;
+    private int itemId = NO_ITEM;
     private TextInputLayout nameLayout;
     private TextInputLayout quantityLayout;
     private TextInputLayout expiryLayout;
@@ -34,7 +39,6 @@ public class AddEditIngredientActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_edit_ingredient);
 
-        setTitle(R.string.add_ingredient);
         // show back arrow in the app bar
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -53,6 +57,16 @@ public class AddEditIngredientActivity extends AppCompatActivity {
 
         dbHelper = new DatabaseHelper(this);
 
+        // an id in the intent means edit mode
+        // no id go into add mode
+        itemId = getIntent().getIntExtra(EXTRA_ITEM_ID, NO_ITEM);
+        if (itemId == NO_ITEM) {
+            setTitle(R.string.add_ingredient);
+        } else {
+            setTitle(R.string.edit_ingredient);
+            loadItem();
+        }
+
         findViewById(R.id.save_button).setOnClickListener(v -> {
             if (validateInput()) {
                 saveItem();
@@ -60,8 +74,44 @@ public class AddEditIngredientActivity extends AppCompatActivity {
         });
     }
 
-    // builds a PantryItem from the form, inserts it, and goes back to the list
-    // only called after validateInput() passed, so quantity is a real number
+    // fills every field from the save item so it can be edited
+    private void loadItem() {
+        PantryItem item = dbHelper.getPantryItem(itemId);
+        if (item == null) {
+            Toast.makeText(this, R.string.error_item_not_found, Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
+
+
+
+        nameInput.setText(item.getName());
+        quantityInput.setText(item.getQuantityText());
+        selectUnit(item.getUnit());
+        if (item.getExpiryDate() != null) {
+            expiryInput.setText(item.getExpiryDate());
+        }
+    }
+
+
+
+
+    //chooses dropdown entry that matches the saved unit
+    private void selectUnit(String unit) {
+        for (int i = 0; i < unitSpinner.getCount(); i++) {
+            if (unitSpinner.getItemAtPosition(i).toString().equals(unit)) {
+                unitSpinner.setSelection(i);
+                return;
+            }
+        }
+    }
+
+
+
+    // builds a PantryItem from the form
+// inserts it or updates it
+    // then goes back to the list
     private void saveItem() {
         String name = nameInput.getText().toString().trim();
         double quantity = Double.parseDouble(quantityInput.getText().toString().trim());
@@ -73,8 +123,17 @@ public class AddEditIngredientActivity extends AppCompatActivity {
             expiry = null;
         }
 
-        long newId = dbHelper.insertPantryItem(new PantryItem(name, quantity, unit, expiry));
-        if (newId == -1) {
+        boolean saved;
+        if (itemId == NO_ITEM) {
+            long newId = dbHelper.insertPantryItem(new PantryItem(name, quantity, unit, expiry));
+            saved = newId != -1;
+        } else {
+        // same id as the row that was tapped, so this overwrites it instead of adding a copy
+            int rowsChanged = dbHelper.updatePantryItem(new PantryItem(itemId, name, quantity, unit, expiry));
+            saved = rowsChanged == 1;
+        }
+
+        if (!saved) {
             // stay on the form so nothing the user typed is lost
             Toast.makeText(this, R.string.error_save_failed, Toast.LENGTH_LONG).show();
             return;

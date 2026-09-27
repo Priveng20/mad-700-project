@@ -15,11 +15,18 @@ import project.app.smartpantry.model.PantryItem;
 // connects a list of PantryItems to the recyclerView
 public class PantryAdapter extends RecyclerView.Adapter<PantryAdapter.PantryViewHolder> {
 
+    // list opens the edit form
+    public interface OnItemClickListener {
+        void onItemClick(PantryItem item);
+    }
+
     private List<PantryItem> items;
+    private final OnItemClickListener clickListener;
 
 
-    public PantryAdapter(List<PantryItem> items) {
+    public PantryAdapter(List<PantryItem> items, OnItemClickListener clickListener) {
         this.items = items;
+        this.clickListener = clickListener;
     }
 
 
@@ -51,7 +58,7 @@ public class PantryAdapter extends RecyclerView.Adapter<PantryAdapter.PantryView
 
         holder.name.setText(item.getName());
         holder.quantity.setText(context.getString(R.string.item_quantity,
-                formatQuantity(item.getQuantity()), item.getUnit()));
+                item.getQuantityText(), item.getUnit()));
 
 
         if (item.getExpiryDate() == null || item.getExpiryDate().isEmpty()) {
@@ -59,6 +66,8 @@ public class PantryAdapter extends RecyclerView.Adapter<PantryAdapter.PantryView
         } else {
             holder.expiry.setText(context.getString(R.string.item_expiry, item.getExpiryDate()));
         }
+
+        holder.itemView.setOnClickListener(v -> clickListener.onItemClick(item));
     }
 
 
@@ -68,17 +77,9 @@ public class PantryAdapter extends RecyclerView.Adapter<PantryAdapter.PantryView
         return items.size();
     }
 
-    // show 3.0 as 3 but keeps 1.5 as 1.5
-    private String formatQuantity(double quantity) {
-        if (quantity == Math.floor(quantity)) {
-            return String.valueOf((long) quantity);
-        }
-        return String.valueOf(quantity);
-    }
 
 
-
-    // holds the three text views of one row so they are only looked up once
+    // holds the text views of one row so its looked up once
     static class PantryViewHolder extends RecyclerView.ViewHolder {
         TextView name;
         TextView quantity;

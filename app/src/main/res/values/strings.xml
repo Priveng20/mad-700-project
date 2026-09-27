@@ -2,9 +2,12 @@
     <string name="app_name">Smart Pantry Manager</string>
     <string name="pantry_empty">pantry is empty. Tap + to add an ingredient</string>
     <string name="add_ingredient">Add ingredient</string>
+    <string name="edit_ingredient">Edit ingredient</string>
 
 
     <string name="item_quantity">%1$s %2$s</string>
+
+
     <string name="item_expiry">Expires %1$s</string>
     <string name="item_no_expiry">No expiry date</string>
 
@@ -20,6 +23,7 @@
     <string name="error_quantity_invalid">Enter a valid number</string>
     <string name="error_quantity_positive">Quantity must be more than 0</string>
     <string name="error_expiry_invalid">Pick a valid date</string>
+    <string name="error_item_not_found">That ingredient no longer exists</string>
     <string name="error_save_failed">Couldn\'t save the ingredient, please try again</string>
 
 </resources>

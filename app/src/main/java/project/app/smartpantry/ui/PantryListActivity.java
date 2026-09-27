@@ -45,7 +45,12 @@ public class PantryListActivity extends AppCompatActivity {
         dbHelper = new DatabaseHelper(this);
 
         // starts empty onResume fills it from the database
-        adapter = new PantryAdapter(new ArrayList<>());
+        // tapping a row opens the same form in edit mode
+        adapter = new PantryAdapter(new ArrayList<>(), item -> {
+            Intent intent = new Intent(this, AddEditIngredientActivity.class);
+            intent.putExtra(AddEditIngredientActivity.EXTRA_ITEM_ID, item.getId());
+            startActivity(intent);
+        });
         pantryList.setAdapter(adapter);
         // names the exact screen to open
         FloatingActionButton addButton = findViewById(R.id.add_button);
