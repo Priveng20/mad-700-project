@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 
@@ -50,7 +51,7 @@ public class PantryListActivity extends AppCompatActivity {
             Intent intent = new Intent(this, AddEditIngredientActivity.class);
             intent.putExtra(AddEditIngredientActivity.EXTRA_ITEM_ID, item.getId());
             startActivity(intent);
-        });
+        }, item -> confirmDelete(item));
         pantryList.setAdapter(adapter);
         // names the exact screen to open
         FloatingActionButton addButton = findViewById(R.id.add_button);
@@ -63,6 +64,13 @@ public class PantryListActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        loadItems();
+    }
+
+
+
+    // reads the pantry from the database into the list and updates the empty message
+    private void loadItems() {
         List<PantryItem> items = dbHelper.getAllPantryItems();
         adapter.setItems(items);
 
@@ -73,6 +81,22 @@ public class PantryListActivity extends AppCompatActivity {
             emptyText.setVisibility(View.GONE);
         }
     }
+
+    // confirm before deleting
+    private void confirmDelete(PantryItem item) {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.delete_title)
+                .setMessage(getString(R.string.delete_message, item.getName()))
+                .setNegativeButton(R.string.cancel, null)
+                .setPositiveButton(R.string.delete, (dialog, which) -> {
+                    dbHelper.deletePantryItem(item.getId());
+                    loadItems();
+                })
+                .show();
+    }
+
+
+
 
     @Override
     protected void onDestroy() {

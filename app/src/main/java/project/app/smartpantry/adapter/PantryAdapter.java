@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -20,13 +21,21 @@ public class PantryAdapter extends RecyclerView.Adapter<PantryAdapter.PantryView
         void onItemClick(PantryItem item);
     }
 
+    // list asks for confirmation before deleting
+    public interface OnDeleteClickListener {
+        void onDeleteClick(PantryItem item);
+    }
+
     private List<PantryItem> items;
     private final OnItemClickListener clickListener;
+    private final OnDeleteClickListener deleteListener;
 
 
-    public PantryAdapter(List<PantryItem> items, OnItemClickListener clickListener) {
+    public PantryAdapter(List<PantryItem> items, OnItemClickListener clickListener,
+                         OnDeleteClickListener deleteListener) {
         this.items = items;
         this.clickListener = clickListener;
+        this.deleteListener = deleteListener;
     }
 
 
@@ -68,6 +77,7 @@ public class PantryAdapter extends RecyclerView.Adapter<PantryAdapter.PantryView
         }
 
         holder.itemView.setOnClickListener(v -> clickListener.onItemClick(item));
+        holder.deleteButton.setOnClickListener(v -> deleteListener.onDeleteClick(item));
     }
 
 
@@ -84,6 +94,7 @@ public class PantryAdapter extends RecyclerView.Adapter<PantryAdapter.PantryView
         TextView name;
         TextView quantity;
         TextView expiry;
+        ImageButton deleteButton;
 
 
 
@@ -92,6 +103,7 @@ public class PantryAdapter extends RecyclerView.Adapter<PantryAdapter.PantryView
             name = itemView.findViewById(R.id.item_name);
             quantity = itemView.findViewById(R.id.item_quantity);
             expiry = itemView.findViewById(R.id.item_expiry);
+            deleteButton = itemView.findViewById(R.id.delete_button);
         }
     }
 }
