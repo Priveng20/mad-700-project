@@ -11,6 +11,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import java.util.ArrayList;
 import java.util.List;
 import project.app.smartpantry.model.PantryItem;
+import project.app.smartpantry.model.Recipe;
+import project.app.smartpantry.model.RecipeIngredient;
 
 
 
@@ -89,6 +91,37 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_PANTRY_ITEM);
         db.execSQL(CREATE_TABLE_RECIPE);
         db.execSQL(CREATE_TABLE_RECIPE_INGREDIENT);
+
+        // onCreate only runs when the database file is first made, so this seeds exactly once
+        seedRecipes(db);
+    }
+
+    // inserts every recipe from SeedData with its ingredients, all at once
+    private void seedRecipes(SQLiteDatabase db) {
+        db.beginTransaction();
+        try {
+            for (SeedData.SeedRecipe seed : SeedData.getRecipes()) {
+                ContentValues recipeValues = new ContentValues();
+                recipeValues.put(COLUMN_RECIPE_NAME, seed.getName());
+                recipeValues.put(COLUMN_RECIPE_STEPS, seed.getSteps());
+
+
+
+                long recipeId = db.insertOrThrow(TABLE_RECIPE, null, recipeValues);
+
+                for (RecipeIngredient ingredient : seed.getIngredients()) {
+                    ContentValues ingredientValues = new ContentValues();
+                    ingredientValues.put(COLUMN_RI_RECIPE_ID, recipeId);
+                    ingredientValues.put(COLUMN_RI_INGREDIENT_NAME, ingredient.getIngredientName());
+                    ingredientValues.put(COLUMN_RI_QUANTITY, ingredient.getQuantity());
+                    ingredientValues.put(COLUMN_RI_UNIT, ingredient.getUnit());
+                    db.insertOrThrow(TABLE_RECIPE_INGREDIENT, null, ingredientValues);
+                }
+            }
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
     }
 
 
@@ -166,6 +199,51 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         return db.delete(TABLE_PANTRY_ITEM, COLUMN_ID + " = ?",
                 new String[]{String.valueOf(id)});
+    }
+
+    // reads every recipe, name and steps only, ingredients are fetched separately
+    public List<Recipe> getAllRecipes() {
+        List<Recipe> recipes = new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query(TABLE_RECIPE, null, null, null, null, null, COLUMN_RECIPE_NAME + " ASC");
+
+        try {
+            while (cursor.moveToNext()) {
+                int id = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_RECIPE_ID));
+                String name = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_RECIPE_NAME));
+                String steps = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_RECIPE_STEPS));
+                recipes.add(new Recipe(id, name, steps));
+            }
+        } finally {
+            cursor.close();
+        }
+
+        return recipes;
+    }
+
+
+
+
+    // reads the ingredients of one recipe, in the order each were added
+    public List<RecipeIngredient> getIngredientsForRecipe(int recipeId) {
+        List<RecipeIngredient> ingredients = new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query(TABLE_RECIPE_INGREDIENT, null, COLUMN_RI_RECIPE_ID + " = ?",
+                new String[]{String.valueOf(recipeId)}, null, null, COLUMN_RI_ID + " ASC");
+
+        try {
+            while (cursor.moveToNext()) {
+                int id = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_RI_ID));
+                String name = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_RI_INGREDIENT_NAME));
+                double quantity = cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_RI_QUANTITY));
+                String unit = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_RI_UNIT));
+                ingredients.add(new RecipeIngredient(id, recipeId, name, quantity, unit));
+            }
+        } finally {
+            cursor.close();
+        }
+
+        return ingredients;
     }
 
 
