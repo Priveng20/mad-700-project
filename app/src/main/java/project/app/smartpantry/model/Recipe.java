@@ -1,5 +1,8 @@
 package project.app.smartpantry.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 
 
@@ -9,6 +12,7 @@ public class Recipe {
     private int id;
     private String name;
     private String steps;
+    private List<RecipeIngredient> ingredients = new ArrayList<>();
 
     // used before the recipe exists in the database, so there is no id yet
     public Recipe(String name, String steps) {
@@ -52,5 +56,13 @@ public class Recipe {
 
     public void setSteps(String steps) {
         this.steps = steps;
+    }
+
+    public List<RecipeIngredient> getIngredients() {
+        return ingredients;
+    }
+
+    public void setIngredients(List<RecipeIngredient> ingredients) {
+        this.ingredients = ingredients;
     }
 }

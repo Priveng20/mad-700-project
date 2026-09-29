@@ -1,10 +1,17 @@
 package project.app.smartpantry.logic;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+
+
+import project.app.smartpantry.model.PantryItem;
+import project.app.smartpantry.model.Recipe;
+import project.app.smartpantry.model.RecipeIngredient;
 
 
 
@@ -116,12 +123,129 @@ public class RecipeMatcher {
     }
 
 
- unchanged, and the conversion step rejects it
+
     public static String normaliseUnit(String unit) {
         String cleaned = unit.trim().toLowerCase(Locale.ROOT);
         if (UNIT_ALIASES.containsKey(cleaned)) {
             return UNIT_ALIASES.get(cleaned);
         }
         return cleaned;
+    }
+
+
+    public static final String WEIGHT = "weight";
+    public static final String VOLUME = "volume";
+    public static final String COUNT = "count";
+
+
+    public static class BaseAmount {
+        public final String family;
+        public final double quantity;
+
+        public BaseAmount(String family, double quantity) {
+            this.family = family;
+            this.quantity = quantity;
+        }
+    }
+
+    //converts something like 1.5 kg into weight, 1500 or 2 cup into volume, 500
+    public static BaseAmount toBaseUnit(double quantity, String unit) {
+        switch (normaliseUnit(unit)) {
+            case "g":
+                return new BaseAmount(WEIGHT, quantity);
+            case "kg":
+                return new BaseAmount(WEIGHT, quantity * 1000);
+            case "ml":
+                return new BaseAmount(VOLUME, quantity);
+            case "l":
+                return new BaseAmount(VOLUME, quantity * 1000);
+            case "tsp":
+                return new BaseAmount(VOLUME, quantity * 5);
+            case "tbsp":
+                return new BaseAmount(VOLUME, quantity * 15);
+            case "cup":
+                return new BaseAmount(VOLUME, quantity * 250);
+            case "pcs":
+                return new BaseAmount(COUNT, quantity);
+            default:
+                return null;
+        }
+    }
+
+    // the key used in the totals, normalised name
+    public static String totalsKey(String name, String family) {
+        return normaliseName(name) + "|" + family;
+    }
+
+    // adds up the whole pantry by ingredient
+    public static Map<String, Double> buildPantryTotals(List<PantryItem> pantryItems) {
+        Map<String, Double> totals = new HashMap<>();
+
+        for (PantryItem item : pantryItems) {
+            BaseAmount amount = toBaseUnit(item.getQuantity(), item.getUnit());
+            if (amount == null) {
+                continue;
+            }
+
+            String key = totalsKey(item.getName(), amount.family);
+            Double current = totals.get(key);
+            if (current == null) {
+                current = 0.0;
+            }
+            totals.put(key, current + amount.quantity);
+        }
+
+        return totals;
+    }
+
+
+
+
+
+    private static final double TOLERANCE = 0.0001;
+
+    // true only if every ingredient is in the pantry
+    public static boolean canMake(Recipe recipe, Map<String, Double> pantryTotals) {
+        List<RecipeIngredient> ingredients = recipe.getIngredients();
+        // make it so that a recipe with no ingredients means its ingredients weren't loaded, not that it's free
+        if (ingredients == null || ingredients.isEmpty()) {
+            return false;
+        }
+
+
+
+
+
+
+        for (RecipeIngredient ingredient : ingredients) {
+            BaseAmount needed = toBaseUnit(ingredient.getQuantity(), ingredient.getUnit());
+            if (needed == null) {
+                return false;
+            }
+
+
+
+            Double have = pantryTotals.get(totalsKey(ingredient.getIngredientName(), needed.family));
+            if (have == null || have + TOLERANCE < needed.quantity) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+
+
+    // matching rule, returns only the recipes the pantry can make right now
+    public static List<Recipe> getStrictMatches(List<PantryItem> pantryItems, List<Recipe> recipes) {
+        Map<String, Double> totals = buildPantryTotals(pantryItems);
+
+        List<Recipe> matches = new ArrayList<>();
+        for (Recipe recipe : recipes) {
+            if (canMake(recipe, totals)) {
+                matches.add(recipe);
+            }
+        }
+        return matches;
     }
 }
