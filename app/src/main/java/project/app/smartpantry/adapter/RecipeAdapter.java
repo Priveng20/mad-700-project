@@ -13,10 +13,17 @@ import project.app.smartpantry.model.Recipe;
 // connects a list of recipes to the recyclerview, one item_recipe row per recipe
 public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder> {
 
-    private List<Recipe> recipes;
+    // the suggestions screen decides what a tap does
+    public interface OnRecipeClickListener {
+        void onRecipeClick(Recipe recipe);
+    }
 
-    public RecipeAdapter(List<Recipe> recipes) {
+    private List<Recipe> recipes;
+    private final OnRecipeClickListener clickListener;
+
+    public RecipeAdapter(List<Recipe> recipes, OnRecipeClickListener clickListener) {
         this.recipes = recipes;
+        this.clickListener = clickListener;
     }
 
     // swaps in a fresh list and retake in every row
@@ -41,6 +48,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
         holder.name.setText(recipe.getName());
         holder.ingredientCount.setText(holder.itemView.getContext().getString(
                 R.string.recipe_ingredient_count, recipe.getIngredients().size()));
+        holder.itemView.setOnClickListener(v -> clickListener.onRecipeClick(recipe));
     }
 
     @Override

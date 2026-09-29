@@ -1,5 +1,7 @@
 package project.app.smartpantry.ui;
 
+import android.content.Intent;
+
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -41,7 +43,12 @@ public class SuggestedRecipesActivity extends AppCompatActivity {
         recipeList.setLayoutManager(new LinearLayoutManager(this));
         recipeList.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
-        adapter = new RecipeAdapter(new ArrayList<>());
+        // tapping a recipe opens its detail screen
+        adapter = new RecipeAdapter(new ArrayList<>(), recipe -> {
+            Intent intent = new Intent(this, RecipeDetailActivity.class);
+            intent.putExtra(RecipeDetailActivity.EXTRA_RECIPE_ID, recipe.getId());
+            startActivity(intent);
+        });
         recipeList.setAdapter(adapter);
 
         dbHelper = new DatabaseHelper(this);

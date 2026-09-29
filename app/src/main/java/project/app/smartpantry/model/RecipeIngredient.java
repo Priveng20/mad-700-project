@@ -72,4 +72,12 @@ public class RecipeIngredient {
     public void setUnit(String unit) {
         this.unit = unit;
     }
+
+    //quantity as text for the screen
+    public String getQuantityText() {
+        if (quantity == Math.floor(quantity)) {
+            return String.valueOf((long) quantity);
+        }
+        return String.valueOf(quantity);
+    }
 }
