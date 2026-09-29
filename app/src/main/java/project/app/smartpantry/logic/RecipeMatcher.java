@@ -1,6 +1,12 @@
 package project.app.smartpantry.logic;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+
+
 
 
 
@@ -9,7 +15,60 @@ import java.util.Locale;
 // recipe matching rule and name and unit clean up
 public class RecipeMatcher {
 
-    // turns an ingredient name into one standard form so that
+    // words that end in s but are already singular
+    private static final List<String> NO_CHANGE_WORDS = Arrays.asList(
+            "hummus", "couscous", "asparagus", "molasses", "citrus");
+
+
+
+
+    private static final Map<String, String> SPECIAL_PLURALS = new HashMap<>();
+
+    static {
+        SPECIAL_PLURALS.put("loaves", "loaf");
+        SPECIAL_PLURALS.put("halves", "half");
+        SPECIAL_PLURALS.put("leaves", "leaf");
+        // the "ses" rule would turn this into "chees"
+        SPECIAL_PLURALS.put("cheeses", "cheese");
+    }
+
+    // other ways of writing a unit, mapped to the short form used in the unit dropdown
+    private static final Map<String, String> UNIT_ALIASES = new HashMap<>();
+
+
+
+
+
+    static {
+        UNIT_ALIASES.put("gram", "g");
+        UNIT_ALIASES.put("grams", "g");
+        UNIT_ALIASES.put("gr", "g");
+        UNIT_ALIASES.put("kilogram", "kg");
+        UNIT_ALIASES.put("kilograms", "kg");
+        UNIT_ALIASES.put("kilo", "kg");
+        UNIT_ALIASES.put("kilos", "kg");
+        UNIT_ALIASES.put("millilitre", "ml");
+        UNIT_ALIASES.put("millilitres", "ml");
+        UNIT_ALIASES.put("milliliter", "ml");
+        UNIT_ALIASES.put("milliliters", "ml");
+        UNIT_ALIASES.put("litre", "l");
+        UNIT_ALIASES.put("litres", "l");
+        UNIT_ALIASES.put("liter", "l");
+        UNIT_ALIASES.put("liters", "l");
+        UNIT_ALIASES.put("teaspoon", "tsp");
+        UNIT_ALIASES.put("teaspoons", "tsp");
+        UNIT_ALIASES.put("tablespoon", "tbsp");
+        UNIT_ALIASES.put("tablespoons", "tbsp");
+        UNIT_ALIASES.put("cups", "cup");
+        UNIT_ALIASES.put("pc", "pcs");
+        UNIT_ALIASES.put("piece", "pcs");
+        UNIT_ALIASES.put("pieces", "pcs");
+        UNIT_ALIASES.put("whole", "pcs");
+    }
+
+
+
+    // turns an ingredient name into one standard form
     public static String normaliseName(String name) {
         String cleaned = name.trim().toLowerCase(Locale.ROOT);
         cleaned = cleaned.replaceAll("\\s+", " ");
@@ -21,6 +80,19 @@ public class RecipeMatcher {
 
     // plural rules applied to the end of the name
     private static String toSingular(String name) {
+        // the exception lists checks
+        for (String word : NO_CHANGE_WORDS) {
+            if (endsWithWord(name, word)) {
+                return name;
+            }
+        }
+        for (Map.Entry<String, String> special : SPECIAL_PLURALS.entrySet()) {
+            if (endsWithWord(name, special.getKey())) {
+                String start = name.substring(0, name.length() - special.getKey().length());
+                return start + special.getValue();
+            }
+        }
+
         if (name.endsWith("ies")) {
             return name.substring(0, name.length() - 3) + "y";
         }
@@ -34,5 +106,22 @@ public class RecipeMatcher {
             return name.substring(0, name.length() - 1);
         }
         return name;
+    }
+
+
+
+
+    private static boolean endsWithWord(String name, String word) {
+        return name.equals(word) || name.endsWith(" " + word);
+    }
+
+
+ unchanged, and the conversion step rejects it
+    public static String normaliseUnit(String unit) {
+        String cleaned = unit.trim().toLowerCase(Locale.ROOT);
+        if (UNIT_ALIASES.containsKey(cleaned)) {
+            return UNIT_ALIASES.get(cleaned);
+        }
+        return cleaned;
     }
 }
