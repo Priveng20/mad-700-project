@@ -31,6 +31,7 @@
     <string name="error_item_not_found">That ingredient no longer exists</string>
     <string name="error_save_failed">Couldn\'t save the ingredient, please try again</string>
 
+    <string name="menu_pantry">Pantry</string>
     <string name="menu_suggestions">Suggestions</string>
     <string name="suggested_recipes">Suggested recipes</string>
     <string name="no_matches">No recipes match your pantry yet. Add more ingredients.</string>

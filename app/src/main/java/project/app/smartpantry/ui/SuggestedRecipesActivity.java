@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,7 +22,7 @@ import project.app.smartpantry.model.Recipe;
 
 
 // lists only the recipes the pantry can make right now
-public class SuggestedRecipesActivity extends AppCompatActivity {
+public class SuggestedRecipesActivity extends BaseMenuActivity {
 
     private DatabaseHelper dbHelper;
     private RecipeAdapter adapter;

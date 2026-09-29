@@ -3,13 +3,10 @@ package project.app.smartpantry.ui;
 import android.content.Intent;
 import android.os.Bundle;
 
-import android.view.Menu;
-import android.view.MenuItem;
 
 import android.view.View;
 import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 
 
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -28,7 +25,7 @@ import project.app.smartpantry.model.PantryItem;
 
 
 // the list of everything in the pantry
-public class PantryListActivity extends AppCompatActivity {
+public class PantryListActivity extends BaseMenuActivity {
 
 
     private DatabaseHelper dbHelper;
@@ -103,27 +100,6 @@ public class PantryListActivity extends AppCompatActivity {
 
 
 
-
-    // puts the menu items from pantry_menu.xml into the app bar
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.pantry_menu, menu);
-        return true;
-    }
-
-    // runs when a menu item is tapped
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_suggestions) {
-            startActivity(new Intent(this, SuggestedRecipesActivity.class));
-            return true;
-        }
-        if (item.getItemId() == R.id.action_settings) {
-            startActivity(new Intent(this, SettingsActivity.class));
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     @Override
     protected void onDestroy() {

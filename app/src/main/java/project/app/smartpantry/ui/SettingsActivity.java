@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import project.app.smartpantry.R;
 
@@ -16,7 +15,7 @@ import project.app.smartpantry.R;
 
 
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends BaseMenuActivity {
 
     private static final String PREFS_NAME = "smartpantry_settings";
     private static final String KEY_HIGHLIGHT_EXPIRING = "highlight_expiring";

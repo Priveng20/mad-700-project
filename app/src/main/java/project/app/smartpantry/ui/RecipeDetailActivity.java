@@ -3,14 +3,13 @@ package project.app.smartpantry.ui;
 import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Toast;
-import androidx.appcompat.app.AppCompatActivity;
 import project.app.smartpantry.R;
 import project.app.smartpantry.data.DatabaseHelper;
 import project.app.smartpantry.model.Recipe;
 import project.app.smartpantry.model.RecipeIngredient;
 
 // shows one recipe
-public class RecipeDetailActivity extends AppCompatActivity {
+public class RecipeDetailActivity extends BaseMenuActivity {
 
     // key for the recipe id passed in the intent
     public static final String EXTRA_RECIPE_ID = "recipe_id";
