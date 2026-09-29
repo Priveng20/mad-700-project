@@ -246,6 +246,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return ingredients;
     }
 
+    // every recipe with its ingredients filled in, ready for the matcher
+    public List<Recipe> getAllRecipesWithIngredients() {
+        List<Recipe> recipes = getAllRecipes();
+        for (Recipe recipe : recipes) {
+            recipe.setIngredients(getIngredientsForRecipe(recipe.getId()));
+        }
+        return recipes;
+    }
+
 
 
 
