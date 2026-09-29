@@ -3,4 +3,5 @@
     <color name="accent_dark">#1B5E20</color>
     <color name="white">#FFFFFFFF</color>
     <color name="black">#FF000000</color>
+    <color name="warning">#C62828</color>
 </resources>

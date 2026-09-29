@@ -62,6 +62,8 @@ public class AddEditIngredientActivity extends AppCompatActivity {
         itemId = getIntent().getIntExtra(EXTRA_ITEM_ID, NO_ITEM);
         if (itemId == NO_ITEM) {
             setTitle(R.string.add_ingredient);
+            // new items start on the unit chosen in settings
+            selectUnit(SettingsActivity.getDefaultUnit(this));
         } else {
             setTitle(R.string.edit_ingredient);
             loadItem();

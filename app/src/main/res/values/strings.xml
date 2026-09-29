@@ -43,4 +43,12 @@
     <string name="step_line">%1$d. %2$s</string>
     <string name="error_recipe_not_found">That recipe couldn\'t be found</string>
 
+    <string name="settings">Settings</string>
+    <string name="menu_settings">Settings</string>
+    <string name="setting_expiry_title">Highlight items expiring soon</string>
+    <string name="setting_expiry_summary">Marks pantry items that expire within 3 days or have already expired.</string>
+    <string name="setting_default_unit">Default unit for new ingredients</string>
+    <string name="item_expiring_soon">Expires %1$s - use soon</string>
+    <string name="item_expired">Expired %1$s</string>
+
 </resources>

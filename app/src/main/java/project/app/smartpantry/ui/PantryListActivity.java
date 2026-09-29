@@ -76,6 +76,8 @@ public class PantryListActivity extends AppCompatActivity {
     // reads the pantry from the database into the list and updates the empty message
     private void loadItems() {
         List<PantryItem> items = dbHelper.getAllPantryItems();
+        // read the setting every time
+        adapter.setHighlightExpiring(SettingsActivity.isExpiryHighlightOn(this));
         adapter.setItems(items);
 
         // show the "pantry is empty" message only when there is nothing to list
@@ -114,6 +116,10 @@ public class PantryListActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_suggestions) {
             startActivity(new Intent(this, SuggestedRecipesActivity.class));
+            return true;
+        }
+        if (item.getItemId() == R.id.action_settings) {
+            startActivity(new Intent(this, SettingsActivity.class));
             return true;
         }
         return super.onOptionsItemSelected(item);
