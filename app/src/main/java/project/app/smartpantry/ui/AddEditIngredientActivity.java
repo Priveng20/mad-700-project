@@ -31,6 +31,7 @@ public class AddEditIngredientActivity extends AppCompatActivity {
     private EditText quantityInput;
 
     private Spinner unitSpinner;
+    private String[] unitCodes;
     private EditText expiryInput;
     private DatabaseHelper dbHelper;
 
@@ -101,8 +102,8 @@ public class AddEditIngredientActivity extends AppCompatActivity {
 
     //chooses dropdown entry that matches the saved unit
     private void selectUnit(String unit) {
-        for (int i = 0; i < unitSpinner.getCount(); i++) {
-            if (unitSpinner.getItemAtPosition(i).toString().equals(unit)) {
+        for (int i = 0; i < unitCodes.length; i++) {
+            if (unitCodes[i].equals(unit)) {
                 unitSpinner.setSelection(i);
                 return;
             }
@@ -117,7 +118,8 @@ public class AddEditIngredientActivity extends AppCompatActivity {
     private void saveItem() {
         String name = nameInput.getText().toString().trim();
         double quantity = Double.parseDouble(quantityInput.getText().toString().trim());
-        String unit = unitSpinner.getSelectedItem().toString();
+
+        String unit = unitCodes[unitSpinner.getSelectedItemPosition()];
 
         //an empty box means no expiry date
         String expiry = expiryInput.getText().toString();
@@ -196,8 +198,9 @@ public class AddEditIngredientActivity extends AppCompatActivity {
 
     private void setUpUnitSpinner() {
         unitSpinner = findViewById(R.id.unit_spinner);
+        unitCodes = getResources().getStringArray(R.array.units);
         ArrayAdapter<CharSequence> unitAdapter = ArrayAdapter.createFromResource(
-                this, R.array.units, android.R.layout.simple_spinner_item);
+                this, R.array.unit_labels, android.R.layout.simple_spinner_item);
         unitAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         unitSpinner.setAdapter(unitAdapter);
     }

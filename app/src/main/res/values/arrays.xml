@@ -10,4 +10,18 @@
         <item>cup</item>
         <item>pcs</item>
     </string-array>
+
+
+
+
+    <string-array name="unit_labels">
+        <item>g (grams)</item>
+        <item>kg (kilograms)</item>
+        <item>ml (millilitres)</item>
+        <item>l (litres)</item>
+        <item>tsp (teaspoons)</item>
+        <item>tbsp (tablespoons)</item>
+        <item>cup (cups)</item>
+        <item>pcs (pieces)</item>
+    </string-array>
 </resources>

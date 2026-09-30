@@ -69,19 +69,25 @@ public class SettingsActivity extends BaseMenuActivity {
 
     private void setUpDefaultUnitSpinner() {
         Spinner unitSpinner = findViewById(R.id.default_unit_spinner);
+        // shows "g (grams)" etc. but saves the short code from the matching position in "units"
+        String[] unitCodes = getResources().getStringArray(R.array.units);
         ArrayAdapter<CharSequence> unitAdapter = ArrayAdapter.createFromResource(
-                this, R.array.units, android.R.layout.simple_spinner_item);
+                this, R.array.unit_labels, android.R.layout.simple_spinner_item);
         unitAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         unitSpinner.setAdapter(unitAdapter);
 
-        unitSpinner.setSelection(unitAdapter.getPosition(getDefaultUnit(this)));
+        String savedUnit = getDefaultUnit(this);
+        for (int i = 0; i < unitCodes.length; i++) {
+            if (unitCodes[i].equals(savedUnit)) {
+                unitSpinner.setSelection(i);
+            }
+        }
 
 
         unitSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String unit = parent.getItemAtPosition(position).toString();
-                prefs(SettingsActivity.this).edit().putString(KEY_DEFAULT_UNIT, unit).apply();
+                prefs(SettingsActivity.this).edit().putString(KEY_DEFAULT_UNIT, unitCodes[position]).apply();
             }
 
             @Override

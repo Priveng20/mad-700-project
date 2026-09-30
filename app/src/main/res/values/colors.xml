@@ -1,7 +1,8 @@
 <resources>
     <color name="accent">#2E7D32</color>
     <color name="accent_dark">#1B5E20</color>
+    <color name="accent_light">#81C784</color>
     <color name="white">#FFFFFFFF</color>
     <color name="black">#FF000000</color>
-    <color name="warning">#C62828</color>
+    <color name="warning">#EF5350</color>
 </resources>
